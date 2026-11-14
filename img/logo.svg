@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 14 172 220" role="img" aria-label="5C">
+  <style>
+    .o{stroke:#1a1a1a}.i{stroke:#9a9a9a}.a{stroke:#1a1a1a}.b{stroke:#616161}.c{stroke:#a8a8a8}.f{fill:#fff}
+    @media (prefers-color-scheme: dark){.o,.a{stroke:#f2f2f2}.i{stroke:#6a6a6a}.b{stroke:#ababab}.c{stroke:#6e6e6e}.f{fill:#1a1a1a}}
+  </style>
+  <path class="f o" d="M20 20 H180 V120 C180 180 140 210 100 228 C60 210 20 180 20 120 Z" stroke-width="6" stroke-linejoin="round"/>
+  <path class="i" d="M28 28 H172 V120 C172 175 136 202 100 219 C64 202 28 175 28 120 Z" fill="none" stroke-width="1.6" stroke-linejoin="round"/>
+  <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path class="a" d="M94 82 H41.6 V123.1 A26 26 0 1 1 49.3 151.9"/>
+    <path class="b" d="M94 89 H48.1 V125.5 A19 19 0 1 1 53.8 146.6"/>
+    <path class="c" d="M94 96 H54.7 V127.9 A12 12 0 1 1 58.3 141.2"/>
+    <path class="a" d="M161.46 94.54 A36 36 0 1 0 161.46 145.46"/>
+    <path class="b" d="M156.51 99.49 A29 29 0 1 0 156.51 140.51"/>
+    <path class="c" d="M151.56 104.44 A22 22 0 1 0 151.56 135.56"/>
+  </g>
+</svg>

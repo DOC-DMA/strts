@@ -1,0 +1,495 @@
+/*
+ * strts – Gestaltung
+ * Copyright (C) 2026 5C – GPL-3.0, siehe LICENSE
+ * Bewusst nur Schwarz, Weiß und Grautöne; einzige Ausnahme ist die Fehlerfarbe.
+ */
+
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #7a7a7a;
+  --line: #c9c9c9;
+  --cell: #ffffff;
+  --black: #1a1a1a;
+  --black-fg: #ffffff;
+  --given: #111111;
+  --peer: #f3f3f3;
+  --same: #e3e3e3;
+  --sel: #dedede;
+  --btn: #f4f4f4;
+  --btn-hover: #e8e8e8;
+  --btn-border: #d4d4d4;
+  --error: #c62828;
+  --shadow: 0 12px 40px rgba(0, 0, 0, .18);
+  --lg-a: #1a1a1a;
+  --lg-b: #616161;
+  --lg-c: #a8a8a8;
+
+  --gutter: 10px;     /* Seitenrand im Hochformat */
+  --panel-h: 186px;   /* Aktionszeile + Ziffernblock + Umschalter im Hochformat */
+  --top-h: 46px;
+  --extra-top: 0px;   /* zusätzlicher Abstand oben, siehe Web-App-Regel unten */
+  --size: max(280px, min(100vw - 2 * var(--gutter), 100dvh - var(--top-h) - var(--panel-h) - var(--extra-top) - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom), 680px));
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --fg: #ededed;
+    --muted: #8f8f8f;
+    --line: #3d3d3d;
+    --cell: #202020;
+    --black: #000000;
+    --black-fg: #ededed;
+    --given: #f5f5f5;
+    --peer: #2a2a2a;
+    --same: #353535;
+    --sel: #4a4a4a;
+    --btn: #1f1f1f;
+    --btn-hover: #2b2b2b;
+    --btn-border: #3a3a3a;
+    --error: #ef6b6b;
+    --shadow: 0 12px 40px rgba(0, 0, 0, .6);
+    --lg-a: #f2f2f2;
+    --lg-b: #ababab;
+    --lg-c: #6e6e6e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+a { color: inherit; text-underline-offset: 2px; }
+
+button {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* ---------- Grundaufbau ---------- */
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top) + var(--extra-top)) env(safe-area-inset-right) max(0px, env(safe-area-inset-bottom) - 14px) env(safe-area-inset-left);
+}
+
+.top {
+  height: var(--top-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: calc(var(--size) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo { height: 30px; width: auto; flex: none; }
+.lg-fill { fill: var(--bg); }
+.lg-a { stroke: var(--lg-a); }
+.lg-b { stroke: var(--lg-b); }
+.lg-c { stroke: var(--lg-c); }
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name { font-size: 19px; font-weight: 700; letter-spacing: .02em; }
+.brand-sub { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+
+.status { display: flex; align-items: center; gap: 14px; font-size: 14px; }
+.level { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); white-space: nowrap; }
+.timer { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 3.2em; text-align: right; }
+
+.dots { display: inline-flex; gap: 3px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--fg); }
+
+.game {
+  flex: 1;
+  display: grid;
+  grid-template-columns: var(--size);
+  justify-content: center;
+  align-content: center;
+  gap: 8px;
+  padding: 0 var(--gutter) 6px;
+}
+
+/* Als Web-App vom Home-Bildschirm legt iOS unter die Statusleiste einen Weichzeichner,
+   der über den sicheren Bereich hinausreicht. Die Kopfzeile rückt deshalb etwas tiefer. */
+@media (display-mode: standalone) and (orientation: portrait) {
+  :root { --extra-top: 36px; }
+}
+
+/* ---------- Spielfeld ---------- */
+
+.board-wrap { position: relative; width: var(--size); height: var(--size); flex: none; }
+
+.board {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template: repeat(9, 1fr) / repeat(9, 1fr);
+  gap: 1px;
+  padding: 1px;
+  background: var(--line);
+  outline: 1px solid var(--line);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  background: var(--cell);
+  color: var(--given);
+  font-size: calc(var(--size) / 9 * .56);
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cell.given { font-weight: 800; }
+.cell.black { background: var(--black); color: var(--black-fg); font-weight: 800; cursor: default; }
+.cell.peer { background: var(--peer); }
+.cell.same { background: var(--same); }
+.cell.sel { background: var(--sel); }
+.cell.wrong { color: var(--error); }
+.cell.wrong::after {
+  content: "";
+  position: absolute;
+  left: 22%; right: 22%; bottom: 12%;
+  height: 2px;
+  background: var(--error);
+}
+.cell.shown { color: var(--muted); font-style: italic; }
+
+.notes {
+  position: absolute;
+  inset: 5%;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  place-items: center;
+  font-size: calc(var(--size) / 9 * .23);
+  font-weight: 400;
+  color: var(--fg);
+  pointer-events: none;
+}
+.notes[hidden] { display: none; }
+.notes span { visibility: hidden; }
+.notes span.on { visibility: visible; }
+.val { pointer-events: none; }
+
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  color: var(--muted);
+  font-size: 15px;
+}
+.board-wrap.loading .board-overlay { display: flex; }
+
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--line);
+  border-top-color: var(--fg);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Steuerung ---------- */
+
+.panel {
+  width: var(--size);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+}
+
+.actions button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 0 3px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  font-size: 11px;
+  letter-spacing: .01em;
+  cursor: pointer;
+}
+.actions svg, .key svg {
+  width: 20px; height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.actions button:active { background: var(--btn-hover); }
+
+.pad {
+  display: grid;
+  grid-template-columns: 1.15fr repeat(5, 1fr);
+  grid-template-rows: 40px 40px;
+  gap: 6px;
+}
+
+.key {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--btn-border);
+  border-radius: 3px;
+  background: var(--btn);
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0;
+  cursor: pointer;
+  transition: background .08s;
+}
+.key:active { background: var(--sel); }
+.key-undo { grid-row: span 2; }
+.key.done { color: var(--line); }
+
+.modes {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+.modes button {
+  height: 30px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  font-size: 16px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.modes button[aria-pressed="true"] { color: var(--fg); font-weight: 600; border-bottom-color: var(--fg); }
+
+.kbd-hint { display: none; }
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 1px 5px;
+  border: 1px solid var(--btn-border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--btn);
+  font: inherit;
+  font-size: .82em;
+  text-align: center;
+}
+
+.foot {
+  flex: none;
+  padding: 2px 10px 4px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ---------- Maus/Tastatur vorhanden ---------- */
+
+@media (hover: hover) {
+  .actions button:hover { background: var(--btn); }
+  .key:hover { background: var(--btn-hover); }
+  .modes button:not([aria-pressed="true"]):hover { color: var(--fg); }
+}
+
+/* ---------- Querformat: Steuerung neben dem Spielfeld ---------- */
+
+@media (min-width: 700px) and (min-aspect-ratio: 11/10) {
+  :root {
+    --side: 268px;
+    --size: max(260px, min(100vw - var(--side) - 72px - env(safe-area-inset-left) - env(safe-area-inset-right), 100dvh - var(--top-h) - 52px - env(safe-area-inset-top) - env(safe-area-inset-bottom), 680px));
+  }
+  .top { max-width: calc(var(--size) + var(--side) + 72px); padding: 0 16px; }
+  .game {
+    grid-template-columns: var(--size) var(--side);
+    grid-template-areas: "board actions" "board panel";
+    align-content: center;
+    gap: 16px 40px;
+    padding: 0 16px 8px;
+  }
+  .board-wrap { grid-area: board; }
+  .actions { grid-area: actions; align-self: end; }
+  .panel { grid-area: panel; align-self: start; }
+  .panel { width: var(--side); gap: 16px; }
+  .actions { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .actions button { padding: 10px 0 8px; font-size: 12.5px; gap: 3px; }
+  .actions svg, .key svg { width: 23px; height: 23px; }
+  .pad { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(4, 52px); gap: 8px; }
+  .key[data-digit] { grid-column: span 2; font-size: 26px; }
+  .key-undo { grid-row: 4; grid-column: 1 / span 3; }
+  .key-erase { grid-row: 4; grid-column: 4 / span 3; }
+}
+
+/* Querformat auf niedrigen Bildschirmen (iPhone quer) */
+@media (min-width: 700px) and (min-aspect-ratio: 11/10) and (max-height: 520px) {
+  :root { --top-h: 40px; --side: 250px; }
+  :root { --size: max(220px, min(100vw - var(--side) - 72px - env(safe-area-inset-left) - env(safe-area-inset-right), 100dvh - var(--top-h) - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
+  .logo { height: 26px; }
+  .brand-sub, .foot { display: none; }
+  .game { gap: 6px 24px; padding-bottom: 4px; }
+  .panel { gap: 6px; }
+  .actions { grid-template-columns: repeat(6, 1fr); gap: 0; }
+  .actions button { padding: 3px 0; font-size: 0; gap: 0; }
+  .pad { grid-template-rows: repeat(4, minmax(34px, calc((100dvh - 190px) / 4))); gap: 5px; }
+  .modes button { height: 26px; }
+  .actions svg { width: 20px; height: 20px; }
+}
+
+@media (hover: hover) and (min-width: 700px) {
+  .kbd-hint {
+    display: block;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+/* ---------- Dialoge ---------- */
+
+dialog {
+  width: min(400px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 22px 22px 18px;
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+}
+dialog.dlg-wide { width: min(520px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0, 0, 0, .45); }
+
+dialog h2 { margin: 0 0 12px; font-size: 21px; font-weight: 700; outline: none; }
+dialog h3 { margin: 20px 0 6px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.dlg-text { margin: 0 0 8px; }
+.dlg-text.small { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* Hauptknopf steht im HTML zuerst (Enter löst ihn aus) und wird rechts angezeigt */
+.dlg-buttons { display: flex; flex-direction: row-reverse; justify-content: flex-start; gap: 8px; margin-top: 20px; }
+
+.btn {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--btn-border);
+  border-radius: 3px;
+  background: var(--btn);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-primary { background: var(--fg); border-color: var(--fg); color: var(--bg); font-weight: 600; }
+
+.levels { margin: 0; padding: 0; border: 0; display: grid; gap: 6px; }
+.levels legend { padding: 0; margin-bottom: 8px; font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.levels label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--btn-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.levels input { position: absolute; opacity: 0; pointer-events: none; }
+.levels label:has(input:checked) { background: var(--fg); border-color: var(--fg); color: var(--bg); font-weight: 600; }
+.levels label:has(input:checked) .dots i { background: color-mix(in srgb, var(--bg) 30%, var(--fg)); }
+.levels label:has(input:checked) .dots i.on { background: var(--bg); }
+.levels label:has(input:focus-visible) { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.option { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.option input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--fg); }
+
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+
+.keys { width: 100%; border-collapse: collapse; font-size: 14px; }
+.keys td { padding: 5px 0; vertical-align: top; }
+.keys td:first-child { width: 42%; white-space: nowrap; }
+.keys kbd { margin-right: 2px; }
+
+/* ---------- Hinweis ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--top-h) + 10px + env(safe-area-inset-top));
+  transform: translate(-50%, -12px);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 10px 18px;
+  border-radius: 4px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 10;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
+  .toast, .key { transition: none; }
+}
