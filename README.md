@@ -48,6 +48,7 @@ Das Format der Rätsel-Links (`?code=…`, Kodierung Version 2) ist mit dem Orig
 | Pfad | Inhalt |
 |---|---|
 | `index.html` | Seite |
+| `impressum.html` | Impressum, Datenschutz, Lizenzhinweise |
 | `css/style.css` | Gestaltung |
 | `js/generator.js` | Rätselgenerator, Kodierung |
 | `js/worker.js` | Web Worker für den Generator |
@@ -58,7 +59,13 @@ Das Format der Rätsel-Links (`?code=…`, Kodierung Version 2) ist mit dem Orig
 
 ## Veröffentlichen
 
-Diese Dateien und Ordner in das Verzeichnis der Domain hochladen: `index.html`, `manifest.webmanifest`, `LICENSE`, `css/`, `js/`, `img/`.
+```sh
+./build-zip.sh
+```
+
+Das Skript packt `index.html`, `impressum.html`, `manifest.webmanifest`, `LICENSE`, `css/`, `js/` und `img/` in `strts-upload.zip`. Den Inhalt der Zip in das Verzeichnis der Domain hochladen.
+
+Die `impressum.html` im Repository enthält Platzhalter statt Name und Anschrift. Die ausgefüllte Fassung liegt lokal als `impressum.privat.html` (nicht im Repository); das Skript nimmt sie, wenn sie vorhanden ist, und legt sie als `impressum.html` in die Zip. Wer Datenschutztexte ändert, muss beide Dateien anpassen.
 
 ## Lokal ausprobieren und testen
 
